@@ -38,63 +38,79 @@ namespace DotNetCoreEFAPI.Controllers
         [HttpGet("{id}", Name = "Get")]
         public IActionResult Get(long id)
         {
-            Employee employee = _dataRepository.Get(id);
-
-            if (employee == null)
+            if (ModelState.IsValid)
             {
-                return NotFound("The Employee record couldn't be found.");
-            }
+                Employee employee = _dataRepository.Get(id);
 
-            return Ok(employee);
+                if (employee == null)
+                {
+                    return NotFound("The Employee record couldn't be found.");
+                }
+                return Ok(employee);
+            }
+            return BadRequest(ModelState);
         }
 
         // POST: api/Employee
         [HttpPost]
         public IActionResult Post([FromBody] Employee employee)
         {
-            if (employee == null)
+            if (ModelState.IsValid)
             {
-                return BadRequest("Employee is null.");
-            }
+                if (employee == null)
+                {
+                    return BadRequest("Employee is null.");
+                }
 
-            _dataRepository.Add(employee);
-            return CreatedAtRoute(
-                  "Get",
-                  new { Id = employee.EmployeeId },
-                  employee);
+                _dataRepository.Add(employee);
+                return CreatedAtRoute(
+                      "Get",
+                      new { Id = employee.EmployeeId },
+                      employee);
+
+            }
+            return BadRequest(ModelState);
         }
 
         // PUT: api/Employee/5
         [HttpPut("{id}")]
         public IActionResult Put(long id, [FromBody] Employee employee)
         {
-            if (employee == null)
+            if (ModelState.IsValid)
             {
-                return BadRequest("Employee is null.");
-            }
+                if (employee == null)
+                {
+                    return BadRequest("Employee is null.");
+                }
 
-            Employee employeeToUpdate = _dataRepository.Get(id);
-            if (employeeToUpdate == null)
-            {
-                return NotFound("The Employee record couldn't be found.");
-            }
+                Employee employeeToUpdate = _dataRepository.Get(id);
+                if (employeeToUpdate == null)
+                {
+                    return NotFound("The Employee record couldn't be found.");
+                }
 
-            _dataRepository.Update(employeeToUpdate, employee);
-            return NoContent();
+                _dataRepository.Update(employeeToUpdate, employee);
+                return NoContent();
+            }
+            return BadRequest(ModelState);
         }
 
         // DELETE: api/Employee/5
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {
-            Employee employee = _dataRepository.Get(id);
-            if (employee == null)
+            if (ModelState.IsValid)
             {
-                return NotFound("The Employee record couldn't be found.");
-            }
+                Employee employee = _dataRepository.Get(id);
+                if (employee == null)
+                {
+                    return NotFound("The Employee record couldn't be found.");
+                }
 
-            _dataRepository.Delete(employee);
-            return NoContent();
+                _dataRepository.Delete(employee);
+                return NoContent();
+            }
+            return BadRequest(ModelState);
         }
     }
 }
